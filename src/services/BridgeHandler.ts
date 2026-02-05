@@ -268,10 +268,16 @@ export class BridgeHandler {
   }
 
   sendToWeb(response: BridgeResponse): void {
+    const responseJson = JSON.stringify(response);
     const script = `
-      window.dispatchEvent(new CustomEvent('nativeMessage', {
-        detail: ${JSON.stringify(response)}
-      }));
+    console.log('[App->Web] Script executing...');                                                         
+    console.log('[App->Web] Response:', ${JSON.stringify(responseJson)});  
+      (function() {
+        window.dispatchEvent(new CustomEvent('nativeMessage', {
+          detail: ${responseJson}
+        }));
+      })();
+      true;
     `;
     this.webViewRef.current?.injectJavaScript(script);
   }

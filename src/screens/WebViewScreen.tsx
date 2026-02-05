@@ -86,12 +86,12 @@ const WebViewScreen: React.FC = () => {
   // WebView에 주입할 JavaScript
   const injectedJavaScript = `
     (function() {
-      // 웹에서 앱으로 메시지 전송 헬퍼
-      window.sendToApp = function(type, payload) {
+      // 웹에서 앱으로 메시지 전송 헬퍼 (requestId를 외부에서 받을 수 있도록 수정)
+      window.sendToApp = function(type, payload, requestId) {
         const message = JSON.stringify({
           type: type,
-          payload: payload,
-          requestId: Date.now().toString()
+          payload: payload || {},
+          requestId: requestId || Date.now().toString()
         });
         window.ReactNativeWebView.postMessage(message);
       };
@@ -128,7 +128,10 @@ const WebViewScreen: React.FC = () => {
           onError={() => setHasError(true)}
           onHttpError={() => setHasError(true)}
           // 보안 설정
-          originWhitelist={appConfig.webview.allowedDomains.map(d => `https://${d}*`)}
+          originWhitelist={appConfig.webview.allowedDomains.flatMap(d => [
+            `https://${d}*`,
+            `http://${d}*`,
+          ])}
           javaScriptEnabled={true}
           domStorageEnabled={true}
           startInLoadingState={true}
