@@ -4,9 +4,13 @@ export default {
   bundleId: 'com.lica.app',
 
   // WebView 설정
+  //webview: {
+  //  baseUrl: 'http://localhost:3000',
+  //  allowedDomains: ['localhost'],
+  //},
   webview: {
-    baseUrl: 'http://localhost:3000',
-    allowedDomains: ['localhost'],
+    baseUrl: 'https://rent-lica-web.vercel.app',
+    allowedDomains: ['rent-lica-web.vercel.app'],
   },
 
   // 스플래시/테마
