@@ -1,6 +1,6 @@
-# CLAUDE.md
+# LICA-App-base
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+React Native CLI 기반의 WebView 앱 템플릿 프로젝트입니다. URL과 랜딩 화면만 설정하면 다양한 서비스 앱으로 배포할 수 있습니다.
 
 ## Project Overview
 
@@ -17,7 +17,23 @@ LICA-App-base는 React Native CLI 기반의 WebView 앱 템플릿 프로젝트�
 - React Native 0.83.1
 - TypeScript
 - react-native-webview
-- Firebase Cloud Messaging (FCM) - 푸시 알림
+
+### 주요 라이브러리
+| 라이브러리 | 용도 |
+|-----------|------|
+| `react-native-webview` | WebView 컴포넌트 |
+| `@react-native-firebase/messaging` | 푸시 알림 (FCM) |
+| `react-native-biometrics` | 생체 인증 |
+| `react-native-image-picker` | 카메라/갤러리 |
+| `react-native-geolocation-service` | 위치 정보 |
+| `react-native-calendar-events` | 캘린더 연동 |
+| `react-native-contacts` | 연락처 접근 |
+| `react-native-vision-camera` | 카메라 제어 |
+| `react-native-camera-kit` | QR/바코드 스캔 |
+| `@react-native-community/netinfo` | 네트워크 상태 |
+| `react-native-version-check` | 앱 버전 체크 |
+| `react-native-share` | 네이티브 공유 |
+| `react-native-fs` | 파일 다운로드 |
 
 ## 개발 명령어
 
@@ -73,6 +89,26 @@ export default {
   },
   push: {
     fcmSenderId: '123456789',
+  },
+  version: '1.0.0',
+
+  // 기능 활성화 설정
+  features: {
+    qrScanner: true,           // QR/바코드 스캔
+    networkInfo: true,         // 네트워크 상태 상세 정보
+    versionCheck: true,        // 앱 버전 체크
+    screenshotProtection: false, // 스크린샷 방지
+    contacts: true,            // 연락처 접근
+    cameraControl: true,       // 카메라 제어
+    calendar: true,            // 캘린더 연동
+    biometric: true,           // 생체 인증
+    location: true,            // 위치 정보
+  },
+
+  // 앱스토어 ID (버전 체크용)
+  storeIds: {
+    ios: '',      // App Store ID
+    android: '',  // 패키지명
   },
 }
 ```
@@ -173,6 +209,45 @@ export default {
 | `calendar.getEvents` | 기간 내 일정 조회 |
 | `calendar.deleteEvent` | 일정 삭제 |
 
+### QR코드/바코드 스캔 (scanner)
+| 기능 | 용도 |
+|------|------|
+| `scanner.requestPermission` | 카메라 권한 요청 |
+| `scanner.scan` | QR/바코드 스캔 모드 진입 |
+
+### 네트워크 상태 (network)
+| 기능 | 용도 |
+|------|------|
+| `network.getStatus` | 네트워크 연결 상태 (연결 여부, WiFi/셀룰러) |
+| `network.getDetails` | 상세 정보 (SSID, IP, 신호 강도, 통신사 등) |
+
+### 앱 버전 체크 (version)
+| 기능 | 용도 |
+|------|------|
+| `version.check` | 스토어 최신 버전 확인 |
+| `version.openStore` | 앱스토어/플레이스토어 열기 |
+
+### 보안 (security)
+| 기능 | 용도 |
+|------|------|
+| `security.enableScreenshotProtection` | 스크린샷/화면 녹화 방지 활성화 |
+| `security.disableScreenshotProtection` | 스크린샷 방지 비활성화 |
+
+### 연락처 (contacts)
+| 기능 | 용도 |
+|------|------|
+| `contacts.requestPermission` | 연락처 접근 권한 요청 |
+| `contacts.getAll` | 전체 연락처 조회 |
+| `contacts.getByName` | 이름으로 연락처 검색 |
+
+### 카메라 제어 (camera)
+| 기능 | 용도 |
+|------|------|
+| `camera.open` | 카메라 열기 (설정 포함) |
+| `camera.setFlash` | 플래시 모드 설정 (on/off/auto) |
+| `camera.setZoom` | 줌 레벨 설정 (0.0~1.0) |
+| `camera.switchCamera` | 전면/후면 카메라 전환 |
+
 ## 웹에서 브릿지 사용 예시
 
 ```javascript
@@ -181,16 +256,21 @@ window.addEventListener('nativeAppReady', () => {
   console.log('앱 준비 완료');
 });
 
-// 앱으로 메시지 전송
+// 앱으로 메시지 전송 (requestId는 선택사항)
 window.sendToApp('device.getInfo', {});
+window.sendToApp('device.getInfo', {}, 'my-request-123'); // requestId 지정
 
 // 앱에서 응답 수신
 window.addEventListener('nativeMessage', (event) => {
   const { success, data, error, requestId } = event.detail;
   console.log('응답:', data);
 });
+```
 
-// 캘린더에 일정 추가 예시
+### 주요 API 사용 예시
+
+```javascript
+// 캘린더에 일정 추가
 window.sendToApp('calendar.addEvent', {
   title: '회의',
   startDate: '2024-12-25T10:00:00.000Z',
@@ -198,7 +278,27 @@ window.sendToApp('calendar.addEvent', {
   location: '회의실 A',
   notes: '프로젝트 진행 회의',
   alarms: [{ relativeOffset: -30 }] // 30분 전 알림
-}, 'calendar-request-123');
+});
+
+// 네트워크 상태 확인
+window.sendToApp('network.getStatus', {});
+// → { isConnected: true, type: 'wifi' }
+
+window.sendToApp('network.getDetails', {});
+// → { isConnected: true, type: 'wifi', details: { ssid: 'MyWifi', ipAddress: '192.168.1.10' } }
+
+// 앱 버전 체크
+window.sendToApp('version.check', {});
+// → { currentVersion: '1.0.0', latestVersion: '1.1.0', isUpdateAvailable: true, storeUrl: '...' }
+
+// 연락처 검색
+window.sendToApp('contacts.getByName', { name: '홍길동' });
+
+// 카메라 열기
+window.sendToApp('camera.open', { cameraType: 'back', flashMode: 'auto' });
+
+// 스크린샷 방지
+window.sendToApp('security.enableScreenshotProtection', {});
 ```
 
 ## 필수 기능 목록
