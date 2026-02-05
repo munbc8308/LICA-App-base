@@ -5,8 +5,8 @@ export default {
 
   // WebView 설정
   webview: {
-    baseUrl: 'https://example.com',
-    allowedDomains: ['example.com'],
+    baseUrl: 'http://localhost:3000/bridge-test',
+    allowedDomains: ['localhost'],
   },
 
   // 스플래시/테마
