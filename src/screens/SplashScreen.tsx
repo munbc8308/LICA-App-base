@@ -21,9 +21,11 @@ const SplashScreen: React.FC<SplashScreenProps> = ({onFinish}) => {
     <SafeAreaView
       style={[styles.container, {backgroundColor: appConfig.splash.backgroundColor}]}>
       <View style={styles.content}>
-        {/* 로고 이미지 - assets/logo.png 필요 */}
-        {/* <Image source={appConfig.splash.logoPath} style={styles.logo} resizeMode="contain" /> */}
-        <View style={styles.logoPlaceholder} />
+        <Image
+          source={require('../../assets/logo.png')}
+          style={styles.logo}
+          resizeMode="contain"
+        />
         <ActivityIndicator size="large" color="#007AFF" style={styles.loader} />
       </View>
     </SafeAreaView>
@@ -40,17 +42,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   logo: {
-    width: 150,
-    height: 150,
-  },
-  logoPlaceholder: {
-    width: 150,
-    height: 150,
-    backgroundColor: '#E0E0E0',
-    borderRadius: 20,
+    width: 200,
+    height: 60,
   },
   loader: {
-    marginTop: 30,
+    marginTop: 40,
   },
 });
 

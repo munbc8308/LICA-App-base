@@ -33,6 +33,10 @@
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
+	<key>NSCalendarsUsageDescription</key>
+	<string>캘린더에 일정을 추가하기 위해 접근 권한이 필요합니다.</string>
+	<key>NSCalendarsFullAccessUsageDescription</key>
+	<string>캘린더에 일정을 추가하기 위해 접근 권한이 필요합니다.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
 	<key>RCTNewArchEnabled</key>

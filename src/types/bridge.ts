@@ -30,7 +30,12 @@ export type BridgeMessageType =
   | 'ui.openExternal'
   // 네비게이션
   | 'nav.back'
-  | 'nav.exit';
+  | 'nav.exit'
+  // 캘린더
+  | 'calendar.requestPermission'
+  | 'calendar.addEvent'
+  | 'calendar.getEvents'
+  | 'calendar.deleteEvent';
 
 export interface BridgeMessage<T = unknown> {
   type: BridgeMessageType;
@@ -77,4 +82,39 @@ export interface DeviceInfo {
   model: string;
   appVersion: string;
   uniqueId: string;
+}
+
+// 캘린더 관련 타입
+export interface CalendarEventPayload {
+  title: string;
+  startDate: string; // ISO 8601 형식 (예: '2024-12-25T10:00:00.000Z')
+  endDate: string; // ISO 8601 형식
+  location?: string;
+  notes?: string;
+  url?: string;
+  alarms?: CalendarAlarm[];
+}
+
+export interface CalendarAlarm {
+  date?: string; // 특정 시간에 알람 (ISO 8601)
+  relativeOffset?: number; // 이벤트 시작 전 분 단위 (예: -30은 30분 전)
+}
+
+export interface CalendarGetEventsPayload {
+  startDate: string; // ISO 8601 형식
+  endDate: string; // ISO 8601 형식
+}
+
+export interface CalendarDeleteEventPayload {
+  eventId: string;
+}
+
+export interface CalendarEvent {
+  id: string;
+  title: string;
+  startDate: string;
+  endDate?: string;
+  location?: string;
+  notes?: string;
+  url?: string;
 }

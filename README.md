@@ -165,6 +165,14 @@ export default {
 | `nav.back` | 앱 뒤로가기 |
 | `nav.exit` | 앱 종료 |
 
+### 캘린더 (calendar)
+| 기능 | 용도 |
+|------|------|
+| `calendar.requestPermission` | 캘린더 접근 권한 요청 |
+| `calendar.addEvent` | 네이티브 캘린더에 일정 추가 |
+| `calendar.getEvents` | 기간 내 일정 조회 |
+| `calendar.deleteEvent` | 일정 삭제 |
+
 ## 웹에서 브릿지 사용 예시
 
 ```javascript
@@ -181,6 +189,16 @@ window.addEventListener('nativeMessage', (event) => {
   const { success, data, error, requestId } = event.detail;
   console.log('응답:', data);
 });
+
+// 캘린더에 일정 추가 예시
+window.sendToApp('calendar.addEvent', {
+  title: '회의',
+  startDate: '2024-12-25T10:00:00.000Z',
+  endDate: '2024-12-25T11:00:00.000Z',
+  location: '회의실 A',
+  notes: '프로젝트 진행 회의',
+  alarms: [{ relativeOffset: -30 }] // 30분 전 알림
+}, 'calendar-request-123');
 ```
 
 ## 필수 기능 목록

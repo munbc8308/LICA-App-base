@@ -1,11 +1,11 @@
 export default {
   // 앱 기본 정보
-  appName: 'LICAApp',
+  appName: 'RentLICA',
   bundleId: 'com.lica.app',
 
   // WebView 설정
   webview: {
-    baseUrl: 'http://localhost:3000/bridge-test',
+    baseUrl: 'http://localhost:3000',
     allowedDomains: ['localhost'],
   },
 

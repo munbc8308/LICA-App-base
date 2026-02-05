@@ -6,6 +6,7 @@ import Geolocation from 'react-native-geolocation-service';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import RNFS from 'react-native-fs';
 import RNShare from 'react-native-share';
+import RNCalendarEvents from 'react-native-calendar-events';
 
 // Firebase는 설정 파일이 있을 때만 import
 let messaging: any = null;
@@ -23,6 +24,10 @@ import {
   SharePayload,
   DownloadPayload,
   DeviceInfo as DeviceInfoType,
+  CalendarEventPayload,
+  CalendarGetEventsPayload,
+  CalendarDeleteEventPayload,
+  CalendarEvent,
 } from '../types/bridge';
 import type {WebView} from 'react-native-webview';
 
@@ -142,6 +147,20 @@ export class BridgeHandler {
         case 'nav.exit':
           // 앱 종료는 플랫폼별 처리 필요
           data = true;
+          break;
+
+        // 캘린더
+        case 'calendar.requestPermission':
+          data = await this.requestCalendarPermission();
+          break;
+        case 'calendar.addEvent':
+          data = await this.addCalendarEvent(payload as CalendarEventPayload);
+          break;
+        case 'calendar.getEvents':
+          data = await this.getCalendarEvents(payload as CalendarGetEventsPayload);
+          break;
+        case 'calendar.deleteEvent':
+          data = await this.deleteCalendarEvent(payload as CalendarDeleteEventPayload);
           break;
 
         default:
@@ -265,6 +284,91 @@ export class BridgeHandler {
     } catch {
       return false;
     }
+  }
+
+  // 캘린더 권한 요청
+  private async requestCalendarPermission(): Promise<string> {
+    const status = await RNCalendarEvents.requestPermissions();
+    return status;
+  }
+
+  // 캘린더에 이벤트 추가
+  private async addCalendarEvent(payload: CalendarEventPayload): Promise<string> {
+    // 권한 확인
+    const permission = await RNCalendarEvents.checkPermissions();
+    if (permission !== 'authorized') {
+      const requested = await RNCalendarEvents.requestPermissions();
+      if (requested !== 'authorized') {
+        throw new Error('Calendar permission denied');
+      }
+    }
+
+    // 알람 설정 변환
+    const alarms: Array<{date?: string; relativeOffset?: number}> | undefined =
+      payload.alarms?.map(alarm => {
+        if (alarm.date) {
+          return {date: alarm.date};
+        }
+        if (alarm.relativeOffset !== undefined) {
+          return {relativeOffset: alarm.relativeOffset};
+        }
+        return {relativeOffset: -30}; // 기본값: 30분 전
+      });
+
+    // 이벤트 생성
+    const eventId = await RNCalendarEvents.saveEvent(payload.title, {
+      startDate: payload.startDate,
+      endDate: payload.endDate,
+      location: payload.location,
+      notes: payload.notes,
+      url: payload.url,
+      alarms: alarms as any,
+    });
+
+    return eventId;
+  }
+
+  // 캘린더 이벤트 조회
+  private async getCalendarEvents(
+    payload: CalendarGetEventsPayload,
+  ): Promise<CalendarEvent[]> {
+    // 권한 확인
+    const permission = await RNCalendarEvents.checkPermissions();
+    if (permission !== 'authorized') {
+      const requested = await RNCalendarEvents.requestPermissions();
+      if (requested !== 'authorized') {
+        throw new Error('Calendar permission denied');
+      }
+    }
+
+    const events = await RNCalendarEvents.fetchAllEvents(
+      payload.startDate,
+      payload.endDate,
+    );
+
+    return events.map(event => ({
+      id: event.id,
+      title: event.title,
+      startDate: event.startDate,
+      endDate: event.endDate,
+      location: event.location,
+      notes: event.notes,
+      url: event.url,
+    }));
+  }
+
+  // 캘린더 이벤트 삭제
+  private async deleteCalendarEvent(
+    payload: CalendarDeleteEventPayload,
+  ): Promise<boolean> {
+    // 권한 확인
+    const permission = await RNCalendarEvents.checkPermissions();
+    if (permission !== 'authorized') {
+      throw new Error('Calendar permission denied');
+    }
+
+    const success = await RNCalendarEvents.removeEvent(payload.eventId);
+    return success;
   }
 
   sendToWeb(response: BridgeResponse): void {
