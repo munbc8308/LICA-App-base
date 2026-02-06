@@ -1,6 +1,6 @@
 export default {
   // 앱 기본 정보
-  appName: 'RentLICA',
+  appName: 'FoodLICA',
   bundleId: 'com.lica.app',
 
   // WebView 설정
@@ -9,13 +9,14 @@ export default {
   //  allowedDomains: ['localhost'],
   //},
   webview: {
-    baseUrl: 'https://rent-lica-web.vercel.app',
-    allowedDomains: ['rent-lica-web.vercel.app'],
+    baseUrl: 'https://food-lica-app.vercel.app',
+    allowedDomains: ['food-lica-app.vercel.app'],
   },
 
   // 스플래시/테마
   splash: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#FFFFFF', // 흰색 배경 (로고에 맞춤)
+    themeColor: '#FF6347', // FoodLICA 테마 색상 (프로그레스 바 등)
     logoPath: require('../../assets/logo.png'),
   },
 

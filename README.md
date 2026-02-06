@@ -1,3 +1,26 @@
+# FoodLICA App
+
+> 이 브랜치는 **FoodLICA** (음식점 관련 앱) 전용 설정입니다.
+>
+> 기본 템플릿: [main 브랜치](https://github.com/munbc8308/LICA-App-base/tree/main)
+
+## 앱 정보
+
+| 항목 | 값 |
+|------|-----|
+| 앱 이름 | FoodLICA |
+| 번들 ID | com.lica.app |
+| WebView URL | https://food-lica-app.vercel.app |
+| 테마 색상 | #FF6347 (코랄/오렌지) |
+
+## 브랜치별 앱 관리
+
+이 저장소는 브랜치별로 다른 앱을 관리합니다:
+- `main` - 공통 템플릿
+- `App/FoodLICA-branch` - FoodLICA 앱 (현재 브랜치)
+
+---
+
 # LICA-App-base
 
 React Native CLI 기반의 WebView 앱 템플릿 프로젝트입니다. URL과 랜딩 화면만 설정하면 다양한 서비스 앱으로 배포할 수 있습니다.
